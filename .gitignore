@@ -1,0 +1,15 @@
+*.log
+.DS_Store
+target/
+build/
+*.iml
+.idea
+.classpath
+.gradle
+.vscode
+/code
+.gradletasknamecache
+build.log
+.metals
+**/bin/
+out/

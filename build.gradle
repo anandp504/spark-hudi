@@ -1,0 +1,28 @@
+plugins {
+    // Apply the scala plugin to add support for Scala
+    id 'scala'
+    id 'java-library'
+    id 'com.github.johnrengelman.shadow' version '7.1.0'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+
+    // Use Scala 2.12.14 in our library project
+    implementation 'org.scala-lang:scala-library:2.12.14'
+    implementation 'org.apache.spark:spark-sql_2.12:3.3.0'
+    implementation 'org.apache.hudi:hudi-spark3.3-bundle_2.12:0.14.0'
+    implementation 'org.apache.hive:hive-metastore:2.3.9'
+    implementation 'org.apache.hadoop:hadoop-common:3.3.4'
+    implementation 'org.apache.spark:spark-avro_2.12:3.3.0'
+    // implementation 'org.apache.hive:hive-exec:2.3.9'
+    implementation 'org.apache.spark:spark-hive_2.12:3.3.0'
+    implementation 'com.amazonaws:aws-java-sdk:1.12.594'
+    implementation 'org.apache.hadoop:hadoop-aws:3.3.4'
+
+    // Use Munit for testing our library
+    testImplementation 'org.scalameta:munit_2.13:1.0.0-M10'
+}
