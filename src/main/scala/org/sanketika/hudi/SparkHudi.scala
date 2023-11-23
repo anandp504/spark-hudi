@@ -33,16 +33,13 @@ object SparkHudi extends App {
 
   val tableName = "hudi_ondc_mor"
 
-  // val basePath = "/Users/anand/Documents/Sanketika/obsrv_product/hudi"
-  val basePath = "data"
-
   println(spark.sharedState.externalCatalog.unwrapped)
 
   writeHudiData()
-  // readHudiData()
+  readHudiData()
 
   def writeHudiData(): Unit = {
-    val hudiWriteDF = spark.read.json(s"file://${basePath}/magicpin-replaced.json")
+    val hudiWriteDF = spark.read.json(this.getClass.getClassLoader.getResource("magicpin-replaced.json").getPath)
     hudiWriteDF.write.format("hudi")
     .option(RECORDKEY_FIELD.key(), "context.message_id")
     .option(PRECOMBINE_FIELD.key(), "context.timestamp")
@@ -63,7 +60,7 @@ object SparkHudi extends App {
   }
 
   def readHudiData(): Unit = {
-     val hudiReadDF = spark.read.format("hudi").load(s"$basePath/hudi_ondc_mor")
+     val hudiReadDF = spark.read.format("hudi").load("s3a://hudi/data/hudi_ondc_mor")
      hudiReadDF.createOrReplaceTempView("ondc_data")
      spark.sql("select count(*) from ondc_data").show()
      spark.sql("select context.message_id from ondc_data").show()
