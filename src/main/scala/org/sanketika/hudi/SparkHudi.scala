@@ -13,7 +13,6 @@ object SparkHudi extends App {
     .set("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
     .set("spark.sql.catalog.spark_catalog", "org.apache.spark.sql.hudi.catalog.HoodieCatalog")
     .set("spark.sql.extensions", "org.apache.spark.sql.hudi.HoodieSparkSessionExtension")
-    .set("spark.sql.warehouse.dir", "/Users/anand/Documents/Sanketika/obsrv_product/hudi/spark_warehouse")
     .set("hive.metastore.uris", "thrift://localhost:9083")
 
   val spark = SparkSession
@@ -24,6 +23,8 @@ object SparkHudi extends App {
     .enableHiveSupport()
     .getOrCreate()
 
+  println(spark.sharedState.externalCatalog.unwrapped)
+
   spark.sparkContext.hadoopConfiguration.set("fs.s3a.path.style.access", "true")
   spark.sparkContext.hadoopConfiguration.set("fs.s3a.endpoint", "http://localhost:4566")
   spark.sparkContext.hadoopConfiguration.set("fs.s3a.access.key", "test")
@@ -32,9 +33,6 @@ object SparkHudi extends App {
 
 
   val tableName = "hudi_ondc_mor"
-
-  println(spark.sharedState.externalCatalog.unwrapped)
-
   writeHudiData()
   readHudiData()
 
@@ -56,11 +54,11 @@ object SparkHudi extends App {
     .option(TBL_NAME.key(), tableName)
     .mode(Overwrite)
     // .save(s"/opt/data/hudi/hudi_ondc_mor")
-    .save("s3a://hudi/data/hudi_ondc_mor")
+    .save(s"s3a://hudi/data/$tableName")
   }
 
   def readHudiData(): Unit = {
-     val hudiReadDF = spark.read.format("hudi").load("s3a://hudi/data/hudi_ondc_mor")
+     val hudiReadDF = spark.read.format("hudi").load(s"s3a://hudi/data/$tableName")
      hudiReadDF.createOrReplaceTempView("ondc_data")
      spark.sql("select count(*) from ondc_data").show()
      spark.sql("select context.message_id from ondc_data").show()
