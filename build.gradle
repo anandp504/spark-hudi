@@ -26,3 +26,13 @@ dependencies {
     // Use Munit for testing our library
     testImplementation 'org.scalameta:munit_2.13:1.0.0-M10'
 }
+
+shadowJar {
+    archiveClassifier.set('')
+    zip64 true
+    manifest {
+        attributes 'Main-Class': 'org.sanketika.hudi.SparkHudi'
+        exclude 'META-INF/*.DSA'
+        exclude 'META-INF/*.SF'
+    }
+}
